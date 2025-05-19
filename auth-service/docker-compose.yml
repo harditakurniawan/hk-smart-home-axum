@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: hk-smart-home-api
+    build: 
+      context: .
+      target: ${TARGET:-dev}
+    ports:
+      - "${API_PORT:-3000}:${API_PORT:-3000}"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@pgsqldb/hk_smart_home
+    depends_on:
+      - pgsqldb
+      - redis
+    restart: unless-stopped
+    networks:
+      - hk-smart-home-network
+    volumes:
+      - ./src:/app/src
+      - /app/node_modules
+
+  pgsqldb:
+    container_name: hk-smart-home-pg
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5431:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hk-smart-home-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    container_name: hk-smart-home-redis
+    image: redis:7.0-alpine
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - hk-smart-home-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis-data:
+
+networks:
+  hk-smart-home-network:
+    driver: bridge

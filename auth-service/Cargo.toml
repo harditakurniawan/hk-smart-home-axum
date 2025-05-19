@@ -1,0 +1,31 @@
+[package]
+name = "hk-smart-home-axum-auth-service"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+members = [".", "entity", "migration"]
+
+[dependencies]
+entity = { path = "entity" }
+migration = { path = "migration" }
+axum = "0.8.3"
+axum-valid = "0.23.0"
+chrono = { version = "0.4.40", features = ["serde"] }
+dotenv = "0.15.0"
+sea-orm = { version = "1.1.10", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+sqlx = { version = "0.8.5", features = ["runtime-async-std-native-tls", "mysql", "chrono", "uuid"] }
+tokio = { version = "1.44.2", features = ["full"] }
+uuid = { version = "1.16.0", features = ["serde", "v7"] }
+validator = { version = "0.20.0", features = ["derive"] }
+jsonwebtoken = "9.3.1"
+bcrypt = "0.17.0"
+axum-extra = "0.10.1"
+num_cpus = "1.16.0"
+axum-guard-router = "0.2.1"
+strum = { version = "0.27.1", features = ["derive"] }
+tower-http = "0.6.4"
+bb8-redis = "0.23.0"
+bb8 = "0.9.0"
